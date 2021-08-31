@@ -1,11 +1,17 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$script_name = <<-EOF
+$script_ansible = <<-EOF
  sudo apt update
  sudo apt install -y software-properties-common
  sudo add-apt-repository --yes --update ppa:ansible/ansible
  sudo apt install -y ansible
+
+EOF
+
+$script_update = <<-EOF
+  sudo apt update
+  sudo apt upgrade -y
 
 EOF
 
@@ -17,7 +23,7 @@ EOF
 
 Vagrant.configure("2") do |config|
   config.vm.define "ansible" do |server|
-    server.vm.box = "ubuntu/xenial64"
+    server.vm.box = "ubuntu/focal64"
     server.vm.hostname = "ansible"
     server.vm.network "public_network", ip: "192.168.0.201", bridge: "wlp9s0"
     server.vm.provider "virtualbox" do |vb|
@@ -27,11 +33,11 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--groups", "/Vagrant/Lab-ansible"]
     end
     server.vm.provision "shell", inline: $hosts_name
-    server.vm.provision "shell", inline: $script_name
+    server.vm.provision "shell", inline: $script_ansible
   end
 
   config.vm.define "webserver1" do |server|
-    server.vm.box = "ubuntu/xenial64"
+    server.vm.box = "ubuntu/focal64"
     server.vm.hostname = "webserver1"
     server.vm.network "public_network", ip: "192.168.0.202", bridge: "wlp9s0"
     server.vm.provider "virtualbox" do |vb|
@@ -41,10 +47,10 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--groups", "/Vagrant/Lab-ansible"]
     end
     server.vm.provision "shell", inline: $hosts_name
-    server.vm.provision "shell", inline: $script_name
+    server.vm.provision "shell", inline: $script_update
   end
   config.vm.define "webserver2" do |server|
-    server.vm.box = "ubuntu/xenial64"
+    server.vm.box = "ubuntu/focal64"
     server.vm.hostname = "webserver2"
     server.vm.network "public_network", ip: "192.168.0.203", bridge: "wlp9s0"
     server.vm.provider "virtualbox" do |vb|
@@ -54,6 +60,6 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--groups", "/Vagrant/Lab-ansible"]
     end
     server.vm.provision "shell", inline: $hosts_name
-    server.vm.provision "shell", inline: $script_name
+    server.vm.provision "shell", inline: $script_update
   end
 end
